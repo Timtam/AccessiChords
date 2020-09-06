@@ -5,8 +5,8 @@ package.path = path .. "?.lua"
 local AccessiChords = require('timtam_AccessiChords')
 
 local note = AccessiChords.getCurrentPitchCursorNote()
-local lastNote = AccessiChords.getValue('last_pitch_cursor_position', note)
-local chordIndex = AccessiChords.getValue('last_chord_position', 0)
+local lastNote = tonumber(AccessiChords.getValue('last_pitch_cursor_position', note))
+local chordIndex = tonumber(AccessiChords.getValue('last_chord_position', 0))
 
 chordIndex = chordIndex - 1
 
