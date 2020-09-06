@@ -343,7 +343,70 @@ local function getChordNamesForNote(note)
 
 end
 
+local function getActiveMidiTake()
+
+  local activeMidiEditor = reaper.MIDIEditor_GetActive()
+
+  return reaper.MIDIEditor_GetTake(activeMidiEditor)
+end
+
+local function getCursorPosition()
+  return reaper.GetCursorPosition()
+end
+
+local function getCursorPositionPPQ()
+  return reaper.MIDI_GetPPQPosFromProjTime(getActiveMidiTake(), getCursorPosition())
+end
+
+local function getActiveMediaItem()
+  return reaper.GetMediaItemTake_Item(getActiveMidiTake())
+end
+
+local function getMediaItemStartPosition()
+  return reaper.GetMediaItemInfo_Value(getActiveMediaItem(), "D_POSITION")
+end
+
+local function getMediaItemStartPositionPPQ()
+  return reaper.MIDI_GetPPQPosFromProjTime(getActiveMidiTake(), getMediaItemStartPosition())
+end
+
+local function getMediaItemStartPositionQN()
+  return reaper.MIDI_GetProjQNFromPPQPos(getActiveMidiTake(), getMediaItemStartPositionPPQ())
+end
+
+local function getGridUnitLength()
+
+  local gridLengthQN = reaper.MIDI_GetGrid(getActiveMidiTake())
+  local mediaItemPlusGridLengthPPQ = reaper.MIDI_GetPPQPosFromProjQN(getActiveMidiTake(), getMediaItemStartPositionQN() + gridLengthQN)
+  local mediaItemPlusGridLength = reaper.MIDI_GetProjTimeFromPPQPos(getActiveMidiTake(), mediaItemPlusGridLengthPPQ)
+  return mediaItemPlusGridLength - getMediaItemStartPosition()
+end
+
+local function getMidiEndPositionPPQ()
+
+  local startPosition = getCursorPosition()
+  local startPositionPPQ = getCursorPositionPPQ()
+  local endPositionPPQ = reaper.MIDI_GetPPQPosFromProjTime(getActiveMidiTake(), startPosition+getGridUnitLength())
+
+  return endPositionPPQ
+end
+
+local function insertMidiNotes(...)
+
+  local startPosition = getCursorPositionPPQ()
+  local endPosition = getMidiEndPositionPPQ()
+
+  local channel = getCurrentNoteChannel()
+  local velocity = getCurrentVelocity()
+  local _, note
+
+  for _, note in pairs({...}) do
+    reaper.MIDI_InsertNote(getActiveMidiTake(), false, false, startPosition, endPosition, channel, note, velocity, false)
+  end
+end
+
 return {
+  getActiveMidiTake = getActiveMidiTake,
   getAllChords = getAllChords,
   getAllNoteNames = getAllNoteNames,
   getChordNamesForNote = getChordNamesForNote,
@@ -351,9 +414,12 @@ return {
   getCurrentNoteChannel = getCurrentNoteChannel,
   getCurrentPitchCursorNote = getCurrentPitchCursorNote,
   getCurrentVelocity = getCurrentVelocity,
+  getCursorPosition = getCursorPosition,
+  getCursorPositionPPQ = getCursorPositionPPQ,
   getNoteName = getNoteName,
   getValue = getValue,
   getValuePersist = getValuePersist,
+  insertMidiNotes = insertMidiNotes,
   notesAreValid = notesAreValid,
   playNotes = playNotes,
   print = print,
