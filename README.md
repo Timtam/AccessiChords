@@ -53,26 +53,55 @@ Chords are an important, if not the most important part of music. As soon as you
 
 Thats probably the reason why the [ChordGun scripts][chordgun-url] where invented. Those were ment to provide a nice-looking interface and the ability to get a quick overview over all chords available and the possibility to quickly shoot them into your project whenever you need them.
 
-Unfortunately though, those ChordGun scripts are not accessible for visually impaired users. The interface is not accessible at all, neither with JAWS nor NVDA, not under Mac nor Windows. Thats why I started this project. Let's AccessiChords be the successor of ChordGun - at least for VI people.
+Unfortunately though, those ChordGun scripts are not accessible for visually impaired users. The interface is not accessible at all, neither with JAWS nor NVDA, not under Mac nor Windows. Thats why I started this project. Let AccessiChords be the successor of ChordGun - at least for VI people.
 
 As such, AccessiChords provides a way to quickly access all chords related to a note selected with the pitch cursor and inject them into your MIDI editor at the current position and with the given grid size. See [Usage](#usage) for more information.
 
 ### Built With
 
-* []()
-* []()
-* []()
+* [Lua 5.3](https://www.lua.org/manual/5.3/)
+* [REAPER 6.13 and above (older versions might run as well)](https://reaper.fm)
+* [OSARA nightly build as of Sep 4 or later](https://osara.reaperaccessibility.com/snapshots/)
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
+### Installation
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+#### ReaPack
+
+It is recommended to get the latest stable version from ReaPack by synchronizing your repositories and searching for AccessiChords in the package list. This will make sure to add all the available actions to your actions list as well.
+
+#### Building from source
+
+##### Clone
+
+If you thus instead want to test the bleeding edge build of this package, clone this repository locally:
+
 ```sh
-npm install npm@latest -g
+git clone https://github.com/Timtam/AccessiChords.git
 ```
+
+Copy the timtam_AccessiChords folder into your REAPER's scripts folder afterwards.
+
+##### Adding actions
+
+Open an empty project within REAPER and open the actions list (shortcut: F4). Make sure to filter for MIDI Editor so that the actions will not be accessible from outside that one.
+Now select New Action and Load ReaScript. Make sure to load every timtam_AccessiChords file from within the timtam_AccessiChords folder, except the one that is called timtam_AccessiChords.lua. That one only contains dependencies and doesn't contain any action.
+
+### Assigning shortcuts
+
+After installing the scripts in either of the ways above, you will have the actions provided by AccessiChords available in your actions list to be used.
+I however recommend to assign shortcuts to them to speed up the workflow and productivity with this toolset.
+Therefore, open the actions list again and search for AccessiChords in the filter input. I'd recommend the following shortcuts for the corresponding actions, although that's up to personal preference and you can assign them as you see fit:
+
+* timtam_AccessiChords insert selected chord for pitch cursor.lua: Shift + i (CAUTION: this one seems to be assigned already, so you might need to overwrite it. It seems to be the same one as plain i though, so you shouldn't have any disadvantages in overwriting the original one)
+* timtam_AccessiChords select next chord for pitch cursor.lua: CTRL + ALT + Up
+* timtam_AccessiChords select previous chord for pitch cursor.lua: CTRL + ALT + DOWN
+
+Note: insert corresponding Mac keys for CTRL and SHIFT here.
+
+The script will be entirely keyboard-controllable afterwards.
 
 ## Usage
 
