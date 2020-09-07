@@ -105,23 +105,30 @@ The script will be entirely keyboard-controllable afterwards.
 
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+All the functionalities below can and should only be executed from within the MIDI editor.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+NOTE: all speech announcements will only work if you've got an OSARA version installed which was released Sep 4 2020 or later. If your installed OSARA version is older than that, you won't get any speech announcements by these scripts.
 
+### Cycling through available chords
 
+After you've selected a note using the pitch cursor (ALT + UP or DOWN arrow within the OSARA keymap), you can use the actions "timtam_AccessiChords select next chord for pitch cursor.lua" and "timtam_AccessiChords select previous chord for pitch cursor.lua" to cycle through all chords available for that note. When doing so, the chord will be played on the note channel selected for the virtual MIDI keyboard with the default velocity of the same. The name of the chord will also be announced by your screen reader.
+
+### Inserting a selected chord
+
+When having a chord selected, you can use the action "timtam_AccessiChords insert selected chord for pitch cursor.lua" to insert this chord at the current position into the MIDI editor. The notes will have the length of the current grid size or, if the length of the next inserted note is set using the appropriate reaper-native actions, they will have the appropriate length as well. The chord will be played again and the edit cursor will automatically be moved along the track by the size of the inserted notes.
+Note though that in contradiction to reaper-native note insertion, there currently is no speech when the cursor is moved that way. This will be considered a feature later to be implemented though.
 
 <!-- ROADMAP -->
 ## Roadmap
 
 See the [open issues](https://github.com/Timtam/AccessiChords/issues) for a list of proposed features (and known issues).
 
-
-
 <!-- CONTRIBUTING -->
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+### Contribute by coding
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -129,19 +136,27 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+### Contribute by testing
 
+Feel free to give these scripts a go and see if they fit your workflow.
+Do you like those scripts, but can think of a way they might become even more useful to you? Feel free to let me know by opening an issue or contacting me via email at <software@satoprogs.de>.
+Same goes for bugs you might have encountered or new features you'd like to see.
+
+### Contribute by paying me a coffee
+
+Developing takes time and effort and since those scripts are free to use and open-source, I don't get anything out of it except appreciation. Appreciation doesn't pay monthly bills though. 
+If you think those scripts greatly improved your life by helping you with your productivity and workflow, or you simply want to give something back, i'd greatly appreciate a small donation via PayPal to the following link: <https://paypal.me/ToniRonaldBarth>
+Don't feel obligated though.
 
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
-
+Distributed under the GNU GPL v3 License. See `LICENSE` for more information.
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@GixGax95](https://twitter.com/GixGax95) - software@satoprogs.de
+Toni Barth - [@GixGax95](https://twitter.com/GixGax95) - software@satoprogs.de
 
 Project Link: [https://github.com/Timtam/AccessiChords](https://github.com/Timtam/AccessiChords)
 
