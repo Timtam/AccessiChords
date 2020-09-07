@@ -382,11 +382,29 @@ local function getGridUnitLength()
   return mediaItemPlusGridLength - getMediaItemStartPosition()
 end
 
+local function getNextNoteLength()
+
+  local activeMidiEditor = reaper.MIDIEditor_GetActive()
+  
+  if activeMidiEditor == nil then
+    return 0
+  end
+  
+  return reaper.MIDIEditor_GetSetting_int(activeMidiEditor, "default_note_len")
+end
+
 local function getMidiEndPositionPPQ()
 
   local startPosition = getCursorPosition()
   local startPositionPPQ = getCursorPositionPPQ()
-  local endPositionPPQ = reaper.MIDI_GetPPQPosFromProjTime(getActiveMidiTake(), startPosition+getGridUnitLength())
+
+  local noteLength = getNextNoteLength()
+  
+  if noteLength == 0 then
+    noteLength = getGridUnitLength()
+  end
+
+  local endPositionPPQ = reaper.MIDI_GetPPQPosFromProjTime(getActiveMidiTake(), startPosition+noteLength)
 
   return endPositionPPQ
 end
