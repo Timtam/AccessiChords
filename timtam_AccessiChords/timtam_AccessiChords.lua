@@ -411,21 +411,12 @@ local function insertMidiNotes(...)
 end
 
 return {
-  getActiveMidiTake = getActiveMidiTake,
-  getAllChords = getAllChords,
-  getAllNoteNames = getAllNoteNames,
   getChordNamesForNote = getChordNamesForNote,
   getChordsForNote = getChordsForNote,
-  getCurrentNoteChannel = getCurrentNoteChannel,
   getCurrentPitchCursorNote = getCurrentPitchCursorNote,
-  getCurrentVelocity = getCurrentVelocity,
-  getCursorPosition = getCursorPosition,
-  getCursorPositionPPQ = getCursorPositionPPQ,
-  getNoteName = getNoteName,
   getValue = getValue,
   getValuePersist = getValuePersist,
   insertMidiNotes = insertMidiNotes,
-  notesAreValid = notesAreValid,
   playNotes = playNotes,
   print = print,
   setValue = setValue,
