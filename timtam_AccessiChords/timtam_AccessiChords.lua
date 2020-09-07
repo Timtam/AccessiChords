@@ -393,16 +393,21 @@ end
 
 local function insertMidiNotes(...)
 
-  local startPosition = getCursorPositionPPQ()
-  local endPosition = getMidiEndPositionPPQ()
+  local startPositionPPQ = getCursorPositionPPQ()
+  local endPositionPPQ = getMidiEndPositionPPQ()
 
   local channel = getCurrentNoteChannel()
+  local take = getActiveMidiTake()
   local velocity = getCurrentVelocity()
   local _, note
 
   for _, note in pairs({...}) do
-    reaper.MIDI_InsertNote(getActiveMidiTake(), false, false, startPosition, endPosition, channel, note, velocity, false)
+    reaper.MIDI_InsertNote(take, false, false, startPositionPPQ, endPositionPPQ, channel, note, velocity, false)
   end
+
+  local endPosition = reaper.MIDI_GetProjTimeFromPPQPos(take, endPositionPPQ)
+
+  reaper.SetEditCurPos(endPosition, true, false)
 end
 
 return {
