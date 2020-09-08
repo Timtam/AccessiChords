@@ -390,7 +390,9 @@ local function getNextNoteLength()
     return 0
   end
   
-  return reaper.MIDIEditor_GetSetting_int(activeMidiEditor, "default_note_len")
+  local noteLen = reaper.MIDIEditor_GetSetting_int(activeMidiEditor, "default_note_len")
+
+  return reaper.MIDI_GetProjTimeFromPPQPos(getActiveMidiTake(), noteLen)
 end
 
 local function getMidiEndPositionPPQ()
@@ -403,6 +405,8 @@ local function getMidiEndPositionPPQ()
   if noteLength == 0 then
     noteLength = getGridUnitLength()
   end
+
+  print(noteLength)
 
   local endPositionPPQ = reaper.MIDI_GetPPQPosFromProjTime(getActiveMidiTake(), startPosition+noteLength)
 
