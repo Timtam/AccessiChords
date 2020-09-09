@@ -4,15 +4,12 @@ package.path = path .. "?.lua"
 
 local AccessiChords = require('timtam_AccessiChords')
 
+AccessiChords.prepareValues()
+
 local note = AccessiChords.getCurrentPitchCursorNote()
 local chordIndex = tonumber(AccessiChords.getValue('last_chord_position', 1))
 
 local chords = AccessiChords.getChordsForNote(note)
-
-if chords[chordIndex] == nil then
-  AccessiChords.print('reset chord to 1')
-  chordIndex = 1
-end
 
 AccessiChords.stopNotes()
 
