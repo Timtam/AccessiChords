@@ -488,6 +488,7 @@ return {
   getValuePersist = getValuePersist,
   insertMidiNotes = insertMidiNotes,
   playNotes = playNotes,
+  prepareValues = prepareValues,
   print = print,
   setValue = setValue,
   setValuePersist = setValuePersist,
