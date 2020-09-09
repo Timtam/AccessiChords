@@ -308,8 +308,14 @@ local function getChordsForNote(note, inversion)
 
         notes = getChordInversion(inversion, table.unpack(notes))
 
-        if notesAreValid(table.unpack(notes)) == false then
+        if notes == nil then
           notes = {}
+        else
+
+          if notesAreValid(table.unpack(notes)) == false then
+            notes = {}
+          end
+
         end
 
       end
