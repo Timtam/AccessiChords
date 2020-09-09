@@ -45,7 +45,7 @@ local function getValue(key, defaultValue)
 end
 
 local function print(message)
-  reaper.ShowConsoleMsg("AccessiChords: "..message)
+  reaper.ShowConsoleMsg("AccessiChords: "..tostring(message))
 end
 
 local function getCurrentPitchCursorNote()
@@ -284,6 +284,8 @@ local function getChordsForNote(note)
 
     if notesAreValid(table.unpack(notes)) == true then
       table.insert(chords, notes)
+    else
+      table.insert(chords, {})
     end
 
   end
@@ -449,46 +451,16 @@ local function getChordInversion(step, ...)
   return notes
 end
 
--- makes sure that all the values stored in reaper are valid, e.g.:
--- user moved the pitch cursor to a new note
--- the last selected chord doesn't exist for that note (out of range)
--- thus a valid chord needs to be selected (or none, if applicable)
--- same goes for chord inversions
-local function prepareValues()
-
-  -- getting all the values
-  local note = getCurrentPitchCursorNote()
-  local chordIndex = tonumber(getValue('last_chord_index', 1))
-  local chordInversion = tonumber(getValue('last_chord_inversion', 0))
-  
-  local chords = getChordsForNote(note)
-
-  if chordIndex > #chords then
-    chordIndex = #chords
-    setValue('last_chord_index', chordIndex)
-  end
-  
-  if chordInversion > 0 then
-
-    local inversion = getChordInversion(chordInversion, table.unpack(chords[chordIndex]))
-
-    if inversion == nil then
-      chordInversion = #chords[chordIndex] - 1
-      setValue('last_chord_inversion', chordInversion)
-    end
-  end
-end
-
 return {
   getChordInversion = getChordInversion,
   getChordNamesForNote = getChordNamesForNote,
   getChordsForNote = getChordsForNote,
   getCurrentPitchCursorNote = getCurrentPitchCursorNote,
+  getNoteName = getNoteName,
   getValue = getValue,
   getValuePersist = getValuePersist,
   insertMidiNotes = insertMidiNotes,
   playNotes = playNotes,
-  prepareValues = prepareValues,
   print = print,
   setValue = setValue,
   setValuePersist = setValuePersist,

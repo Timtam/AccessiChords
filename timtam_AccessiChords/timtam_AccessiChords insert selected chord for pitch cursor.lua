@@ -4,12 +4,20 @@ package.path = path .. "?.lua"
 
 local AccessiChords = require('timtam_AccessiChords')
 
-AccessiChords.prepareValues()
-
 local note = AccessiChords.getCurrentPitchCursorNote()
 local chordIndex = tonumber(AccessiChords.getValue('last_chord_position', 1))
 
 local chords = AccessiChords.getChordsForNote(note)
+
+if #chords[chordIndex] == 0 then
+
+  local chordNames = AccessiChords.getChordNamesForNote(note)
+
+  AccessiChords.speak(chordNames[chordIndex].." does not exist")
+
+  return
+
+end
 
 AccessiChords.stopNotes()
 
