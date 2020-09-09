@@ -270,8 +270,26 @@ local function notesAreValid(...)
 
 end
 
-local function getChordsForNote(note)
+local function getChordInversion(step, ...)
 
+  local notes = {...}
+
+  if step >= #notes then
+    return nil
+  end
+  
+  local i
+
+  for i = 1, step do
+    notes[i] = notes[i] + 12
+  end
+
+  return notes
+end
+
+local function getChordsForNote(note, inversion)
+
+  inversion = inversion or 0
   local chordGenerators = getAllChords()
   
   local chords = {}
@@ -282,10 +300,22 @@ local function getChordsForNote(note)
 
     notes = gen.create(note)
 
-    if notesAreValid(table.unpack(notes)) == true then
-      table.insert(chords, notes)
+    if notesAreValid(table.unpack(notes)) == false then
+      notes = {}
     else
-      table.insert(chords, {})
+
+      if inversion > 0 then
+
+        notes = getChordInversion(inversion, table.unpack(notes))
+
+        if notesAreValid(table.unpack(notes)) == false then
+          notes = {}
+        end
+
+      end
+
+      table.insert(chords, notes)
+
     end
 
   end
@@ -329,15 +359,26 @@ local function getNoteName(note)
   return getAllNoteNames()[noteIndex].." "..tostring(octave)
 end
 
-local function getChordNamesForNote(note)
+local function getChordNamesForNote(note, inversion)
+
+  inversion = inversion or 0
 
   local chordGenerators = getAllChords()
   
   local names = {}
+  local name
 
   for _, gen in pairs(chordGenerators) do
 
-    table.insert(names, getNoteName(note).." "..gen.name)
+    name = getNoteName(note).." "..gen.name
+
+    if inversion > 0 then
+
+      name = name.. " inversion "..tostring(inversion)
+
+    end
+
+    table.insert(names, name)
 
   end
 
@@ -408,8 +449,6 @@ local function getMidiEndPositionPPQ()
     noteLength = getGridUnitLength()
   end
 
-  print(noteLength)
-
   local endPositionPPQ = reaper.MIDI_GetPPQPosFromProjTime(getActiveMidiTake(), startPosition+noteLength)
 
   return endPositionPPQ
@@ -432,23 +471,6 @@ local function insertMidiNotes(...)
   local endPosition = reaper.MIDI_GetProjTimeFromPPQPos(take, endPositionPPQ)
 
   reaper.SetEditCurPos(endPosition, true, false)
-end
-
-local function getChordInversion(step, ...)
-
-  local notes = {...}
-
-  if step >= #notes then
-    return nil
-  end
-  
-  local i
-
-  for i = 1, step do
-    notes[i] = notes[i] + 12
-  end
-
-  return notes
 end
 
 return {

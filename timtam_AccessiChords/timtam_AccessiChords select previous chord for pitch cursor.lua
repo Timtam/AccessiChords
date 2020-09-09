@@ -6,11 +6,12 @@ local AccessiChords = require('timtam_AccessiChords')
 
 local note = AccessiChords.getCurrentPitchCursorNote()
 local chordIndex = tonumber(AccessiChords.getValue('last_chord_position', 1))
+local chordInversion = tonumber(AccessiChords.getValue('last_chord_inversion', 0))
 
 chordIndex = chordIndex - 1
 
-local chords = AccessiChords.getChordsForNote(note)
-local chordNames = AccessiChords.getChordNamesForNote(note)
+local chords = AccessiChords.getChordsForNote(note, chordInversion)
+local chordNames = AccessiChords.getChordNamesForNote(note, chordInversion)
 
 if chordIndex < 1 then
   chordIndex = 1
