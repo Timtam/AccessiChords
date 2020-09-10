@@ -98,6 +98,8 @@ Therefore, open the actions list again and search for AccessiChords in the filte
 * timtam_AccessiChords insert selected chord for pitch cursor.lua: Shift + i (CAUTION: this one seems to be assigned already, so you might need to overwrite it. It seems to be the same one as plain i though, so you shouldn't have any disadvantages in overwriting the original one)
 * timtam_AccessiChords select next chord for pitch cursor.lua: CTRL + ALT + Up
 * timtam_AccessiChords select previous chord for pitch cursor.lua: CTRL + ALT + DOWN
+* timtam_AccessiChords select next chord inversion.lua: CTRL + ALT + RIGHT
+* timtam_AccessiChords select previous chord inversion.lua: CTRL + ALT + LEFT
 
 Note: insert corresponding Mac keys for CTRL and SHIFT here.
 
@@ -111,7 +113,11 @@ NOTE: all speech announcements will only work if you've got an OSARA version ins
 
 ### Cycling through available chords
 
-After you've selected a note using the pitch cursor (ALT + UP or DOWN arrow within the OSARA keymap), you can use the actions "timtam_AccessiChords select next chord for pitch cursor.lua" and "timtam_AccessiChords select previous chord for pitch cursor.lua" to cycle through all chords available for that note. When doing so, the chord will be played on the note channel selected for the virtual MIDI keyboard with the default velocity of the same. The name of the chord will also be announced by your screen reader.
+After you've selected a note using the pitch cursor (ALT + UP or DOWN arrow within the OSARA keymap), you can use the actions "timtam_AccessiChords select next chord for pitch cursor.lua" and "timtam_AccessiChords select previous chord for pitch cursor.lua" to cycle through all chords available for that note. When doing so, the chord will be played on the note channel selected for the virtual MIDI keyboard with the default velocity of the same. The name of the chord will also be announced by your screen reader. The scripts will also announce if the selected chord is not available for the given note.
+
+### Cycling through available chord inversions
+
+After selecting a note with the pitch cursor and a chord using the above actions, you can use the actions "timtam_AccessiChords select next chord inversion.lua" and "timtam_AccessiChords select previous chord inversion.lua" to cycle through the available chord inversions. Those will be announced with speech and remember as well, so that you can use the above actions to change chords while the inversion will be maintained and can be inserted as usual (see below).
 
 ### Inserting a selected chord
 
