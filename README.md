@@ -101,7 +101,7 @@ Therefore, open the actions list again and search for AccessiChords in the filte
 * timtam_AccessiChords select next chord inversion.lua: CTRL + ALT + RIGHT
 * timtam_AccessiChords select previous chord inversion.lua: CTRL + ALT + LEFT
 
-Note: insert corresponding Mac keys for CTRL and SHIFT here.
+Note: when using MacOS, control is command and alt is option. Shift remains the same.
 
 The script will be entirely keyboard-controllable afterwards.
 
