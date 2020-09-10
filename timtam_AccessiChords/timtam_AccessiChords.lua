@@ -93,11 +93,10 @@ local function playNotes(...)
   end
 
   local noteOnCommand = 0x90 + noteChannel
-  local velocity = getCurrentVelocity()
 
   for _, note in pairs({...}) do
 
-    reaper.StuffMIDIMessage(0, noteOnCommand, note, velocity)
+    reaper.StuffMIDIMessage(0, noteOnCommand, note, 96)
   end
 
 end
