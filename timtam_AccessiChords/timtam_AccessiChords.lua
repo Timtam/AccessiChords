@@ -245,7 +245,7 @@ local function getAllChords()
       create = function(note)
         return {
           note,
-          note + 7
+          note + 6
         }
       end
     }
