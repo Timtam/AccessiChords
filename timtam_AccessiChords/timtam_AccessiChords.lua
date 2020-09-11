@@ -6,9 +6,34 @@
 local activeProjectIndex = 0
 local sectionName = "com.timtam.AccessiChord"
 
--- variables
-local deferCount = 0
-local deferTarget = 0
+local function serializeTable(val, name, skipnewlines, depth)
+  skipnewlines = skipnewlines or false
+  depth = depth or 0
+
+  local tmp = string.rep(" ", depth)
+
+  if name then tmp = tmp .. name .. " = " end
+
+  if type(val) == "table" then
+    tmp = tmp .. "{" .. (not skipnewlines and "\n" or "")
+
+    for k, v in pairs(val) do
+      tmp =  tmp .. serializeTable(v, k, skipnewlines, depth + 1) .. "," .. (not skipnewlines and "\n" or "")
+    end
+
+    tmp = tmp .. string.rep(" ", depth) .. "}"
+  elseif type(val) == "number" then
+    tmp = tmp .. tostring(val)
+  elseif type(val) == "string" then
+    tmp = tmp .. string.format("%q", val)
+  elseif type(val) == "boolean" then
+    tmp = tmp .. (val and "true" or "false")
+  else
+    tmp = tmp .. "\"[inserializeable datatype:" .. type(val) .. "]\""
+  end
+
+  return tmp
+end
 
 local function setValuePersist(key, value)
   reaper.SetProjExtState(activeProjectIndex, sectionName, key, value)
@@ -45,6 +70,11 @@ local function getValue(key, defaultValue)
 end
 
 local function print(message)
+
+  if type(message) == "table" then
+    message = serializeTable(message)
+  end
+
   reaper.ShowConsoleMsg("AccessiChords: "..tostring(message))
 end
 
@@ -489,6 +519,7 @@ return {
   insertMidiNotes = insertMidiNotes,
   playNotes = playNotes,
   print = print,
+  serializeTable = serializeTable,
   setValue = setValue,
   setValuePersist = setValuePersist,
   speak = speak,
