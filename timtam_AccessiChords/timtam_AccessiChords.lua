@@ -131,14 +131,27 @@ local function playNotes(...)
 
 end
 
-local function stopNotes()
+local function stopNotes(...)
 
+  local notes = {...}
   local noteChannel = getCurrentNoteChannel()
   local noteOffCommand = 0x80 + noteChannel
+  local _, midiNote
 
-  for midiNote = 0, 127 do
+  if #notes == 0 then
 
-    reaper.StuffMIDIMessage(0, noteOffCommand, midiNote, 0)
+    for midiNote = 0, 127 do
+
+      reaper.StuffMIDIMessage(0, noteOffCommand, midiNote, 0)
+
+    end
+  else
+  
+    for _, midiNote in pairs(notes) do
+
+      reaper.StuffMIDIMessage(0, noteOffCommand, midiNote, 0)
+
+    end
 
   end
 end
