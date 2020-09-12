@@ -16,6 +16,7 @@ local sectionName = "com.timtam.AccessiChord"
 -- stop notes action command ids
 local stopNotesCommandIDs = {
   '_RS7d3c_eea8511e7be6bbe2f32752deed9710fd3727426b', -- installed in ReaPack MIDI Editor folder
+  '_RS7d3c_8e7e4131efe8a66c41c249ba98c117ae8d9a61e2', -- installed directly into scripts folder
 }
 
 local deserializeTable = smallfolk.loads
