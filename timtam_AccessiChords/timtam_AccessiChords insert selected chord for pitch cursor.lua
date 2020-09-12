@@ -20,10 +20,8 @@ if #chords[chordIndex] == 0 then
 
 end
 
-AccessiChords.stopNotes()
-
 AccessiChords.playNotes(table.unpack(chords[chordIndex]))
 
 AccessiChords.insertMidiNotes(table.unpack(chords[chordIndex]))
 
-AccessiChords.stopNotes()
+AccessiChords.stopNotesDeferred(15, table.unpack(chords[chordIndex]))

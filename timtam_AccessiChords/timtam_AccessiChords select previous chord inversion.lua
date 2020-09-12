@@ -27,10 +27,8 @@ if #chords[chordIndex] == 0 then
 
 end
 
-AccessiChords.stopNotes()
-
 AccessiChords.playNotes(table.unpack(chords[chordIndex]))
 
 AccessiChords.speak(chordNames[chordIndex])
 
-AccessiChords.stopNotes()
+AccessiChords.stopNotesDeferred(15, table.unpack(chords[chordIndex]))
