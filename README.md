@@ -84,10 +84,12 @@ git clone https://github.com/Timtam/AccessiChords.git
 
 Copy the timtam_AccessiChords folder into your REAPER's scripts folder afterwards.
 
+note: make sure to copy the folder directly into your Scripts folder, not in some other sub-folder or a totally different directory to make sure that the scripts work directly.
+
 ##### Adding actions
 
 Open an empty project within REAPER and open the actions list (shortcut: F4). Make sure to filter for MIDI Editor so that the actions will not be accessible from outside that one.
-Now select New Action and Load ReaScript. Make sure to load every timtam_AccessiChords file from within the timtam_AccessiChords folder, except the one that is called timtam_AccessiChords.lua. That one only contains dependencies and doesn't contain any action.
+Now select New Action and Load ReaScript. Make sure to load every timtam_AccessiChords file from within the timtam_AccessiChords folder, except the one that is called timtam_AccessiChords.lua. That one only contains dependencies and doesn't contain any action. Also do not load the smallfolk.lua file, that one is not required as an action.
 
 ### Assigning shortcuts
 
@@ -100,6 +102,7 @@ Therefore, open the actions list again and search for AccessiChords in the filte
 * timtam_AccessiChords select previous chord for pitch cursor.lua: CTRL + ALT + DOWN
 * timtam_AccessiChords select next chord inversion.lua: CTRL + ALT + RIGHT
 * timtam_AccessiChords select previous chord inversion.lua: CTRL + ALT + LEFT
+* timtam_AccessiChords stop notes.lua: no shortcut required
 
 Note: when using MacOS, control is command and alt is option. Shift remains the same.
 
@@ -109,7 +112,7 @@ The script will be entirely keyboard-controllable afterwards.
 
 All the functionalities below can and should only be executed from within the MIDI editor.
 
-NOTE: all speech announcements will only work if you've got an OSARA version installed which was released Sep 4 2020 or later. If your installed OSARA version is older than that, you won't get any speech announcements by these scripts.
+note: all speech announcements will only work if you've got an OSARA version installed which was released Sep 4 2020 or later. If your installed OSARA version is older than that, you won't get any speech announcements by these scripts.
 
 ### Cycling through available chords
 
