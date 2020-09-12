@@ -1,39 +1,25 @@
 -- module requirements for all actions
 -- doesn't provide any action by itself, so don't map any shortcut to it or run this action
 
+-- fixing script path for correct require calls
+local path = ({reaper.get_action_context()})[2]:match('^.+[\\//]')
+package.path = path .. "?.lua"
+
+-- other packages
+local smallfolk = require('smallfolk')
+
 -- constants
 
 local activeProjectIndex = 0
 local sectionName = "com.timtam.AccessiChord"
 
-local function serializeTable(val, name, skipnewlines, depth)
-  skipnewlines = skipnewlines or false
-  depth = depth or 0
+-- stop notes action command ids
+local stopNotesCommandIDs = {
+  '_RS7d3c_eea8511e7be6bbe2f32752deed9710fd3727426b', -- installed in ReaPack MIDI Editor folder
+}
 
-  local tmp = string.rep(" ", depth)
-
-  if name then tmp = tmp .. name .. " = " end
-
-  if type(val) == "table" then
-    tmp = tmp .. "{" .. (not skipnewlines and "\n" or "")
-
-    for k, v in pairs(val) do
-      tmp =  tmp .. serializeTable(v, k, skipnewlines, depth + 1) .. "," .. (not skipnewlines and "\n" or "")
-    end
-
-    tmp = tmp .. string.rep(" ", depth) .. "}"
-  elseif type(val) == "number" then
-    tmp = tmp .. tostring(val)
-  elseif type(val) == "string" then
-    tmp = tmp .. string.format("%q", val)
-  elseif type(val) == "boolean" then
-    tmp = tmp .. (val and "true" or "false")
-  else
-    tmp = tmp .. "\"[inserializeable datatype:" .. type(val) .. "]\""
-  end
-
-  return tmp
-end
+local deserializeTable = smallfolk.loads
+local serializeTable = smallfolk.dumps
 
 local function setValuePersist(key, value)
   reaper.SetProjExtState(activeProjectIndex, sectionName, key, value)
@@ -521,7 +507,58 @@ local function insertMidiNotes(...)
   reaper.SetEditCurPos(endPosition, true, false)
 end
 
+-- delay in defer ticks (ca 33 msec)
+local function stopNotesDeferred(delay, ...)
+
+  local notes = {...}
+  local noteTable = deserializeTable(getValue('playing_notes', serializeTable({})))
+  local deferCount = tonumber(getValue('playing_notes_defer_count', 0))
+
+  table.insert(noteTable, {
+    time = deferCount + delay + 1,
+    notes = notes
+  })
+  
+  setValue('playing_notes', serializeTable(noteTable))
+    
+  if deferCount == 0 then
+
+    -- we have to manually launch the action
+    local i
+    local commandID
+    local actionFound
+    
+    for i = 1, #stopNotesCommandIDs do
+
+      actionFound = false
+
+      commandID = reaper.NamedCommandLookup(stopNotesCommandIDs[i])
+
+      if commandID ~= 0 then
+        actionFound = true
+        break
+      end
+      
+    end
+
+    if actionFound == true then
+
+      -- to prevent many calls before even the first defer in the action fires, we'll have to set defer count to 1 already
+      setValue('playing_notes_defer_count', 1)
+
+      reaper.MIDIEditor_OnCommand(reaper.MIDIEditor_GetActive(), commandID)
+
+    else
+      -- message box informing about missing action
+      stopNotes(table.unpack(notes))
+      reaper.MB('The action to stop playing notes could not be found. That will cause issues with real-time generated samples. Please make sure to follow the installation instructions which can be found in the documentation', 'AccessiChords - Error', 0)
+    end
+
+  end
+end
+
 return {
+  deserializeTable = deserializeTable,
   getChordInversion = getChordInversion,
   getChordNamesForNote = getChordNamesForNote,
   getChordsForNote = getChordsForNote,
@@ -536,5 +573,6 @@ return {
   setValue = setValue,
   setValuePersist = setValuePersist,
   speak = speak,
-  stopNotes = stopNotes
+  stopNotes = stopNotes,
+  stopNotesDeferred = stopNotesDeferred
 }
