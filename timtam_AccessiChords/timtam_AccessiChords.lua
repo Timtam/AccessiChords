@@ -514,34 +514,57 @@ local function stopNotesDeferred(delay, ...)
   local noteTable = deserializeTable(getValue('playing_notes', serializeTable({})))
   local deferCount = tonumber(getValue('playing_notes_defer_count', 0))
 
-  table.insert(noteTable, {
-    time = deferCount + delay + 1,
-    notes = notes
-  })
+  local _, i, note, found, noteIndex
   
+  for _, note in pairs(notes) do
+
+    found = false
+
+    for i = 1, #noteTable do
+
+      if noteTable[i]['note'] == note then
+        found = true
+        noteIndex = i
+        break
+      end
+    end
+
+    if found == true then
+      -- note is already in the list
+      -- hence we will set the time to the current defer count + delay
+      noteTable[noteIndex]['time'] = deferCount + delay
+    else
+
+      -- add the note to the list
+      table.insert(noteTable, {
+        time = deferCount + delay + 1,
+        note = note
+      })
+  
+    end
+  end
+
   setValue('playing_notes', serializeTable(noteTable))
     
   if deferCount == 0 then
 
     -- we have to manually launch the action
-    local i
     local commandID
-    local actionFound
     
     for i = 1, #stopNotesCommandIDs do
 
-      actionFound = false
+      found = false
 
       commandID = reaper.NamedCommandLookup(stopNotesCommandIDs[i])
 
       if commandID ~= 0 then
-        actionFound = true
+        found = true
         break
       end
       
     end
 
-    if actionFound == true then
+    if found == true then
 
       -- to prevent many calls before even the first defer in the action fires, we'll have to set defer count to 1 already
       setValue('playing_notes_defer_count', 1)

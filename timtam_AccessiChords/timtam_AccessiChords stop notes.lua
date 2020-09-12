@@ -6,8 +6,6 @@ local AccessiChords = require('timtam_AccessiChords')
 
 local function run()
 
-  AccessiChords.print('stop action run')
-
   local noteTable = AccessiChords.deserializeTable(AccessiChords.getValue('playing_notes', AccessiChords.serializeTable({})))
   local deferCount = tonumber(AccessiChords.getValue('playing_notes_defer_count', 0))
   
@@ -22,19 +20,22 @@ local function run()
   deferCount = deferCount + 1
 
   local i = 1  
-  local notes
+  local notes = {}
 
   repeat
 
     if noteTable[i]['time'] <= deferCount then
-      notes = noteTable[i]['notes']
-      AccessiChords.stopNotes(table.unpack(notes))
+      table.insert(notes, noteTable[i]['note'])
       table.remove(noteTable, i)
     else
       i = i + 1
     end
 
   until (i > #noteTable)
+
+  if #notes > 0 then
+    AccessiChords.stopNotes(table.unpack(notes))
+  end
 
   AccessiChords.setValue('playing_notes', AccessiChords.serializeTable(noteTable))
   AccessiChords.setValue('playing_notes_defer_count', deferCount)
