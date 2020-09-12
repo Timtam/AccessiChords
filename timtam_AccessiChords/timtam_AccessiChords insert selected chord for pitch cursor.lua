@@ -24,4 +24,4 @@ AccessiChords.playNotes(table.unpack(chords[chordIndex]))
 
 AccessiChords.insertMidiNotes(table.unpack(chords[chordIndex]))
 
-AccessiChords.stopNotesDeferred(15, table.unpack(chords[chordIndex]))
+AccessiChords.stopNotesDeferred(10, table.unpack(chords[chordIndex]))
