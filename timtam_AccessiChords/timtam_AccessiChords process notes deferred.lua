@@ -46,6 +46,16 @@ local function run()
   end
 
   if #playNotes > 0 then
+
+    AccessiChords.playNotes(table.unpack(AccessiChords.map(function(e) return e['note'] end, playNotes)))
+
+    for i = 1, #playNotes do
+      table.insert(noteTable, {
+        action = 'stop',
+        note = playNotes[i]['note'],
+        time = deferCount + playNotes[i]['duration'] - 1
+      })
+    end
   end
 
   AccessiChords.setValue('deferred_notes', AccessiChords.serializeTable(noteTable))

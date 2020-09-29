@@ -22,6 +22,16 @@ local deferredNotesCommandIDs = {
 local deserializeTable = smallfolk.loads
 local serializeTable = smallfolk.dumps
 
+-- source: stackoverflow (https://stackoverflow.com/questions/11669926/is-there-a-lua-equivalent-of-scalas-map-or-cs-select-function)
+local function map(f, t)
+  local t1 = {}
+  local t_len = #t
+  for i = 1, t_len do
+    t1[i] = f(t[i])
+  end
+  return t1
+end
+
 local function setValuePersist(key, value)
   reaper.SetProjExtState(activeProjectIndex, sectionName, key, value)
 end
@@ -62,7 +72,7 @@ local function print(message)
     message = serializeTable(message)
   end
 
-  reaper.ShowConsoleMsg("AccessiChords: "..tostring(message))
+  reaper.ShowConsoleMsg("AccessiChords: "..tostring(message).."\n")
 end
 
 local function getCurrentPitchCursorNote()
@@ -394,9 +404,10 @@ local function getNoteName(note)
   return getAllNoteNames()[noteIndex].." "..tostring(octave)
 end
 
-local function getChordNamesForNote(note, inversion)
+local function getChordNamesForNote(note, inversion, mode)
 
   inversion = inversion or 0
+  mode = mode or 0
 
   local chordGenerators = getAllChords()
   
@@ -411,6 +422,12 @@ local function getChordNamesForNote(note, inversion)
 
       name = name.. " inversion "..tostring(inversion)
 
+    end
+
+    if mode == 1 then
+      name = name .. " (broken from lowest to highest)"
+    elseif mode == 2 then
+      name = name .. " (broken from highest to lowest)"
     end
 
     table.insert(names, name)
@@ -470,6 +487,10 @@ local function getNextNoteLength()
   
   local noteLen = reaper.MIDIEditor_GetSetting_int(activeMidiEditor, "default_note_len")
 
+  if noteLen == 0 then
+    return 0
+  end
+
   return reaper.MIDI_GetProjTimeFromPPQPos(getActiveMidiTake(), noteLen)
 end
 
@@ -508,8 +529,8 @@ local function insertMidiNotes(...)
   reaper.SetEditCurPos(endPosition, true, false)
 end
 
--- delay in defer ticks (ca 33 msec)
-local function stopNotesDeferred(delay, ...)
+-- duration in defer ticks (ca 33 msec)
+local function stopNotesDeferred(duration, ...)
 
   local notes = {...}
   local noteTable = deserializeTable(getValue('deferred_notes', serializeTable({})))
@@ -532,14 +553,14 @@ local function stopNotesDeferred(delay, ...)
 
     if found == true then
       -- note is already in the list
-      -- hence we will set the time to the current defer count + delay
-      noteTable[noteIndex]['time'] = deferCount + delay
+      -- hence we will set the time to the current defer count + duration
+      noteTable[noteIndex]['time'] = deferCount + duration
     else
 
       -- add the note to the list
       table.insert(noteTable, {
         action = 'stop',
-        time = deferCount + delay + 1,
+        time = deferCount + duration + 1,
         note = note
       })
   
@@ -582,7 +603,8 @@ local function stopNotesDeferred(delay, ...)
   end
 end
 
--- delay in defer ticks (ca 33 msec)
+-- delay = defer tick delay after which to play the notes
+-- duration in defer ticks
 local function playNotesDeferred(delay, duration, ...)
 
   local notes = {...}
@@ -607,8 +629,8 @@ local function playNotesDeferred(delay, duration, ...)
     if found == true then
       -- note is already in the list
       -- hence we will set the time to the current defer count + delay
-      noteTable[noteIndex]['time'] = deferCount + delay
-      noteTable[noteIndex]['duration'] = duration
+      noteTable[noteIndex]['time'] = deferCount + duration
+      noteTable[noteIndex]['delay'] = delay
     else
 
       -- add the note to the list
@@ -658,6 +680,69 @@ local function playNotesDeferred(delay, duration, ...)
   end
 end
 
+-- plays notes according to chord mode (either full, broken or broken from last to first)
+-- broken chords will take the current note length into consideration
+-- duration in defer ticks (ca 33 msec)
+local function playNotesByChordMode(duration, mode, ...)
+
+  local notes = {...}
+  
+  local lstart, lend, lstep, i
+  local offset = 0
+
+  local stepTime = math.floor(reaper.MIDI_GetProjTimeFromPPQPos(getActiveMidiTake(), getMidiEndPositionPPQ() - getCursorPositionPPQ()) * 1000 / 33)
+
+  if mode == 0 then
+    playNotes(table.unpack(notes))
+    stopNotesDeferred(duration, table.unpack(notes))
+    return
+  end
+
+  if mode == 1 then 
+    lstart = 1
+    lend = #notes
+    lstep = 1
+  elseif mode == 2 then
+    lstart = #notes
+    lend = 1
+    lstep = -1
+  end
+
+  for i = lstart, lend, lstep do
+
+    playNotesDeferred(offset, duration, notes[i])
+    offset = offset + stepTime
+
+  end
+
+end
+
+local function insertMidiNotesByChordMode(mode, ...)
+
+  local notes = {...}
+
+  if mode == 0 then
+    insertMidiNotes(table.unpack(notes))
+    return
+  end
+
+  local lstart, lend, lstep, i
+  
+  if mode == 1 then
+    lstart = 1
+    lend = #notes
+    lstep = 1
+  elseif mode == 2 then
+    lstart = #notes
+    lend = 1
+    lstep = -1
+  end
+  
+  for i = lstart, lend, lstep do
+    insertMidiNotes(notes[i])
+  end
+end
+
 return {
   deserializeTable = deserializeTable,
   getChordInversion = getChordInversion,
@@ -668,7 +753,10 @@ return {
   getValue = getValue,
   getValuePersist = getValuePersist,
   insertMidiNotes = insertMidiNotes,
+  insertMidiNotesByChordMode = insertMidiNotesByChordMode,
+  map = map,
   playNotes = playNotes,
+  playNotesByChordMode = playNotesByChordMode,
   playNotesDeferred = playNotesDeferred,
   print = print,
   serializeTable = serializeTable,
