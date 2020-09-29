@@ -98,11 +98,11 @@ I however recommend to assign shortcuts to them to speed up the workflow and pro
 Therefore, open the actions list again and search for AccessiChords in the filter input. I'd recommend the following shortcuts for the corresponding actions, although that's up to personal preference and you can assign them as you see fit:
 
 * timtam_AccessiChords insert selected chord for pitch cursor.lua: Shift + i (CAUTION: this one seems to be assigned already, so you might need to overwrite it. It seems to be the same one as plain i though, so you shouldn't have any disadvantages in overwriting the original one)
+* timtam_AccessiChords process notes deferred.lua: no shortcut required
 * timtam_AccessiChords select next chord for pitch cursor.lua: CTRL + ALT + Up
 * timtam_AccessiChords select previous chord for pitch cursor.lua: CTRL + ALT + DOWN
 * timtam_AccessiChords select next chord inversion.lua: CTRL + ALT + RIGHT
 * timtam_AccessiChords select previous chord inversion.lua: CTRL + ALT + LEFT
-* timtam_AccessiChords stop notes.lua: no shortcut required
 
 Note: when using MacOS, control is command and alt is option. Shift remains the same.
 

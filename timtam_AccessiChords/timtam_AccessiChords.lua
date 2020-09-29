@@ -13,10 +13,10 @@ local smallfolk = require('smallfolk')
 local activeProjectIndex = 0
 local sectionName = "com.timtam.AccessiChord"
 
--- stop notes action command ids
-local stopNotesCommandIDs = {
-  '_RS7d3c_eea8511e7be6bbe2f32752deed9710fd3727426b', -- installed in ReaPack MIDI Editor folder
-  '_RS7d3c_8e7e4131efe8a66c41c249ba98c117ae8d9a61e2', -- installed directly into scripts folder
+-- deferred notes action command ids
+local deferredNotesCommandIDs = {
+  '_RS7d3c_fe1204a338c449b80d061b385a6beee74578e6e6', -- installed in ReaPack MIDI Editor folder
+  '_RS7d3c_cce1aae0b8451f7e28026e4399bf5a0a3a559017', -- installed directly into scripts folder
 }
 
 local deserializeTable = smallfolk.loads
@@ -512,8 +512,8 @@ end
 local function stopNotesDeferred(delay, ...)
 
   local notes = {...}
-  local noteTable = deserializeTable(getValue('playing_notes', serializeTable({})))
-  local deferCount = tonumber(getValue('playing_notes_defer_count', 0))
+  local noteTable = deserializeTable(getValue('deferred_notes', serializeTable({})))
+  local deferCount = tonumber(getValue('deferred_notes_defer_count', 0))
 
   local _, i, note, found, noteIndex
   
@@ -523,7 +523,7 @@ local function stopNotesDeferred(delay, ...)
 
     for i = 1, #noteTable do
 
-      if noteTable[i]['note'] == note then
+      if noteTable[i]['note'] == note and noteTable[i]['action'] == 'stop' then
         found = true
         noteIndex = i
         break
@@ -538,6 +538,7 @@ local function stopNotesDeferred(delay, ...)
 
       -- add the note to the list
       table.insert(noteTable, {
+        action = 'stop',
         time = deferCount + delay + 1,
         note = note
       })
@@ -545,18 +546,18 @@ local function stopNotesDeferred(delay, ...)
     end
   end
 
-  setValue('playing_notes', serializeTable(noteTable))
+  setValue('deferred_notes', serializeTable(noteTable))
     
   if deferCount == 0 then
 
     -- we have to manually launch the action
     local commandID
     
-    for i = 1, #stopNotesCommandIDs do
+    for i = 1, #deferredNotesCommandIDs do
 
       found = false
 
-      commandID = reaper.NamedCommandLookup(stopNotesCommandIDs[i])
+      commandID = reaper.NamedCommandLookup(deferredNotesCommandIDs[i])
 
       if commandID ~= 0 then
         found = true
@@ -568,14 +569,90 @@ local function stopNotesDeferred(delay, ...)
     if found == true then
 
       -- to prevent many calls before even the first defer in the action fires, we'll have to set defer count to 1 already
-      setValue('playing_notes_defer_count', 1)
+      setValue('deferred_notes_defer_count', 1)
 
       reaper.MIDIEditor_OnCommand(reaper.MIDIEditor_GetActive(), commandID)
 
     else
       -- message box informing about missing action
       stopNotes(table.unpack(notes))
-      reaper.MB('The action to stop playing notes could not be found. That will cause issues with real-time generated samples. Please make sure to follow the installation instructions which can be found in the documentation', 'AccessiChords - Error', 0)
+      reaper.MB('The action to process notes deferred could not be found. That will cause issues with real-time generated samples. Please make sure to follow the installation instructions which can be found in the documentation', 'AccessiChords - Error', 0)
+    end
+
+  end
+end
+
+-- delay in defer ticks (ca 33 msec)
+local function playNotesDeferred(delay, duration, ...)
+
+  local notes = {...}
+  local noteTable = deserializeTable(getValue('deferred_notes', serializeTable({})))
+  local deferCount = tonumber(getValue('deferred_notes_defer_count', 0))
+
+  local _, i, note, found, noteIndex
+  
+  for _, note in pairs(notes) do
+
+    found = false
+
+    for i = 1, #noteTable do
+
+      if noteTable[i]['note'] == note and noteTable[i]['action'] == 'play' then
+        found = true
+        noteIndex = i
+        break
+      end
+    end
+
+    if found == true then
+      -- note is already in the list
+      -- hence we will set the time to the current defer count + delay
+      noteTable[noteIndex]['time'] = deferCount + delay
+      noteTable[noteIndex]['duration'] = duration
+    else
+
+      -- add the note to the list
+      table.insert(noteTable, {
+        action = 'play',
+        time = deferCount + delay + 1,
+        note = note,
+        duration = duration
+      })
+  
+    end
+  end
+
+  setValue('deferred_notes', serializeTable(noteTable))
+    
+  if deferCount == 0 then
+
+    -- we have to manually launch the action
+    local commandID
+    
+    for i = 1, #deferredNotesCommandIDs do
+
+      found = false
+
+      commandID = reaper.NamedCommandLookup(deferredNotesCommandIDs[i])
+
+      if commandID ~= 0 then
+        found = true
+        break
+      end
+      
+    end
+
+    if found == true then
+
+      -- to prevent many calls before even the first defer in the action fires, we'll have to set defer count to 1 already
+      setValue('deferred_notes_defer_count', 1)
+
+      reaper.MIDIEditor_OnCommand(reaper.MIDIEditor_GetActive(), commandID)
+
+    else
+      -- message box informing about missing action
+      playNotes(table.unpack(notes))
+      reaper.MB('The action to process notes deferred could not be found. That will cause issues with real-time generated samples. Please make sure to follow the installation instructions which can be found in the documentation', 'AccessiChords - Error', 0)
     end
 
   end
@@ -592,6 +669,7 @@ return {
   getValuePersist = getValuePersist,
   insertMidiNotes = insertMidiNotes,
   playNotes = playNotes,
+  playNotesDeferred = playNotesDeferred,
   print = print,
   serializeTable = serializeTable,
   setValue = setValue,
