@@ -173,14 +173,14 @@ Project Link: [https://github.com/Timtam/AccessiChords](https://github.com/Timta
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Timtam/repo.svg?style=flat-square
-[contributors-url]: https://github.com/Timtam/repo/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Timtam/repo.svg?style=flat-square
-[forks-url]: https://github.com/Timtam/repo/network/members
-[stars-shield]: https://img.shields.io/github/stars/Timtam/repo.svg?style=flat-square
-[stars-url]: https://github.com/Timtam/repo/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Timtam/repo.svg?style=flat-square
-[issues-url]: https://github.com/Timtam/repo/issues
-[license-shield]: https://img.shields.io/github/license/Timtam/repo.svg?style=flat-square
+[contributors-shield]: https://img.shields.io/github/contributors/Timtam/AccessiChords.svg?style=flat-square
+[contributors-url]: https://github.com/Timtam/AccessiChords/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Timtam/AccessiChords.svg?style=flat-square
+[forks-url]: https://github.com/Timtam/AccessiChords/network/members
+[stars-shield]: https://img.shields.io/github/stars/Timtam/AccessiChords.svg?style=flat-square
+[stars-url]: https://github.com/Timtam/AccessiChords/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Timtam/AccessiChords.svg?style=flat-square
+[issues-url]: https://github.com/Timtam/AccessiChords/issues
+[license-shield]: https://img.shields.io/github/license/Timtam/AccessiChords.svg?style=flat-square
 [license-url]: https://github.com/Timtam/AccessiChords/blob/master/LICENSE
 [chordgun-url]: https://github.com/benjohnson2001/ChordGun "ChordGun scripts"
