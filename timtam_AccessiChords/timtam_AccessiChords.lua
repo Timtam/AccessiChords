@@ -15,8 +15,7 @@ local sectionName = "com.timtam.AccessiChord"
 
 -- deferred notes action command ids
 local deferredNotesCommandIDs = {
-  '_RS7d3c_fe1204a338c449b80d061b385a6beee74578e6e6', -- installed in ReaPack MIDI Editor folder
-  '_RS7d3c_cce1aae0b8451f7e28026e4399bf5a0a3a559017', -- installed directly into scripts folder
+  '_RS7d3c_8d4098d296531feca387419c1f64abc874032912', -- installed in ReaPack MIDI Editor folder
 }
 
 local deserializeTable = smallfolk.loads
